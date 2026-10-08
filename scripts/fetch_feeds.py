@@ -64,10 +64,10 @@ _IMG_SRC_RE = re.compile(r'<img[^>]*\ssrc=["\']([^"\']+)["\']', re.IGNORECASE)
 def _extract_image_from_html(html_text: str | None) -> str | None:
     """HTML断片（RSSのdescription/summary）内の最初の<img src="...">からURLを抽出する.
 
-    Fashionsnap・Hypebeastとも、画像はmedia:thumbnail/media:contentのような
+    一部の媒体は、画像はmedia:thumbnail/media:contentのような
     RSS拡張要素ではなく、description内に埋め込まれた<img>タグとしてのみ提供される
     （実際のRSSを取得して確認済み）。抽出したURLはXMLの二重エンティティエスケープ
-    （例: Hypebeastのクエリ文字列中の`&amp;`）を`unescape()`で解いたうえで、
+    （例: クエリ文字列中の`&amp;`）を`unescape()`で解いたうえで、
     `_is_safe_url()`でスキームを検証する。安全でなければNoneを返す。
     """
     match = _IMG_SRC_RE.search(html_text or "")
@@ -85,13 +85,13 @@ def _extract_image(entry) -> str | None:
         url = entry["media_content"][0].get("url")
         return url if _is_safe_url(url) else None
     # フォールバック1: media拡張要素が無い場合、description内のimgタグから抽出する
-    # （Fashionsnap・Hypebeastはここで見つかる）
+    # （一部の媒体はここで見つかる）
     image = _extract_image_from_html(entry.get("summary", ""))
     if image:
         return image
     # フォールバック2: descriptionに画像が無い場合、content:encoded
     # （entry.content[0].value、feedparserがlistで公開する）内のimgタグから抽出する。
-    # HOUYHNHNMの実データはdescriptionに画像を一切含まず、content:encodedにのみ
+    # 別の媒体の実データはdescriptionに画像を一切含まず、content:encodedにのみ
     # <img>タグとして埋め込まれている（実際のフィードで確認済み）。
     content_list = entry.get("content") or [{}]
     return _extract_image_from_html(content_list[0].get("value", ""))
@@ -110,9 +110,9 @@ _OG_IMAGE_RE = re.compile(
 def fetch_og_image(url: str, timeout: int = 10) -> str | None:
     """記事ページ本体からog:image（OGP画像）を取得する.
 
-    Highsnobietyのように、RSS自体に画像データを一切含まないメディアが
-    あるため、RSS由来の抽出（_extract_image）で見つからなかった場合の
-    フォールバックとして使う。ネットワークエラー・タイムアウト・
+    RSS自体に画像データを一切含まないメディアもあるため、
+    RSS由来の抽出（_extract_image）で見つからなかった場合のフォールバックとして使う。
+    ネットワークエラー・タイムアウト・
     og:imageタグの不在は、1記事の取得失敗でビルド全体を止めないよう
     すべて静かにNoneを返す（呼び出し側は既存の画像なし表示にフォールバックする）。
     """

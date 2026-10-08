@@ -25,7 +25,7 @@ def test_excerpt_short_plain_text_passes_through_unchanged():
 
 
 def test_excerpt_strips_unclosed_img_tag_missing_closing_bracket():
-    # FASHIONSNAPのフィードで実際に観測された、閉じ`>`の無い不完全なimgタグ
+    # 一部の媒体のフィードで実際に観測された、閉じ`>`の無い不完全なimgタグ
     raw = '<img src="https://example.com/photo.jpg 東京で撮影しました。'
     result = excerpt(raw)
     assert "<img" not in result
@@ -34,7 +34,7 @@ def test_excerpt_strips_unclosed_img_tag_missing_closing_bracket():
 
 
 def test_excerpt_strips_wordpress_the_post_first_appeared_on_boilerplate():
-    # HOUYHNHNMの実データ（WordPress由来）は、descriptionの末尾に必ず
+    # SampleMediaAの実データ（WordPress由来）は、descriptionの末尾に必ず
     # 「The post <a>記事タイトル</a> first appeared on <a>サイト名</a>.」という
     # 英語の定型フッターが付く。タグ除去後はリンクテキスト（記事タイトル・サイト名）が
     # 地の文として残るため、周辺の英語の定型句だけを狙って除去する。
@@ -43,21 +43,21 @@ def test_excerpt_strips_wordpress_the_post_first_appeared_on_boilerplate():
         '少しでも涼しげに、ということで、白とか爽やかな色を身に纏いたいところ。'
         'なのですが、あえて「真夏のブラック」をテーマにしたコレクションが'
         '〈ブラブラブラ（BbbLl）〉から発売 […]</p>\n'
-        '<p>The post <a href="https://www.houyhnhnm.jp/news/1162887/">'
+        '<p>The post <a href="https://example.com/news/1162887/">'
         '真夏のブラック。ブラブラブラから軽やかなコットンウェアの新作コレクションが。'
         '夏に黒もオツなものです。</a> first appeared on '
-        '<a href="https://www.houyhnhnm.jp">HOUYHNHNM（フイナム）</a>.</p>'
+        '<a href="https://example.com">SampleMediaA（サンプルメディア）</a>.</p>'
     )
     result = excerpt(raw)
     assert "The post" not in result
     assert "first appeared on" not in result
-    assert "HOUYHNHNM" not in result
+    assert "SampleMediaA" not in result
     assert result.startswith("こう暑いと服のことを考えるのもなんだか億劫になりますよね。")
     assert result.endswith("から発売 […]")
 
 
 def test_excerpt_normal_summary_without_wordpress_boilerplate_is_unaffected():
-    # Fashionsnap/Hypebeast等、WordPressの定型フッターを持たない通常の抜粋文は
+    # 一部の媒体のように、WordPressの定型フッターを持たない通常の抜粋文は
     # 一切変化しない（"post"や"first"を含む正当な本文を誤って削らないことの確認）。
     raw = "<p>新作スニーカーが発売された。This is the first drop of the post-summer collection.</p>"
     result = excerpt(raw)
@@ -144,12 +144,12 @@ def test_load_trend_posts_resolves_images_from_frontmatter_urls(tmp_path):
         encoding="utf-8",
     )
     items = [
-        {"url": "https://example.com/a", "image_url": "https://example.com/a.jpg", "source": "Hypebeast", "title": "記事A"},
-        {"url": "https://example.com/b", "image_url": "https://example.com/b.jpg", "source": "Fashionsnap", "title": "記事B"},
+        {"url": "https://example.com/a", "image_url": "https://example.com/a.jpg", "source": "SampleMediaA", "title": "記事A"},
+        {"url": "https://example.com/b", "image_url": "https://example.com/b.jpg", "source": "SampleMediaB", "title": "記事B"},
     ]
     posts = load_trend_posts(tmp_path, items)
     assert [img["image_url"] for img in posts[0]["images"]] == ["https://example.com/a.jpg", "https://example.com/b.jpg"]
-    assert posts[0]["images"][0]["source"] == "Hypebeast"
+    assert posts[0]["images"][0]["source"] == "SampleMediaA"
     assert posts[0]["images"][0]["url"] == "https://example.com/a"
     assert posts[0]["images"][0]["title"] == "記事A"
 
@@ -162,7 +162,7 @@ def test_load_trend_posts_skips_urls_not_found_or_without_image(tmp_path):
         encoding="utf-8",
     )
     items = [
-        {"url": "https://example.com/no-image", "image_url": None, "source": "Hypebeast", "title": "画像なし記事"},
+        {"url": "https://example.com/no-image", "image_url": None, "source": "SampleMediaA", "title": "画像なし記事"},
     ]
     posts = load_trend_posts(tmp_path, items)
     assert posts[0]["images"] == []
@@ -181,7 +181,7 @@ def test_build_writes_expected_files(tmp_path):
     items = [{
         "title": "新作スニーカー登場",
         "url": "https://example.com/a",
-        "source": "Hypebeast",
+        "source": "SampleMediaA",
         "published": "2026-08-20T00:00:00+00:00",
         "summary": "新作の紹介文",
         "image_url": None,
@@ -195,7 +195,7 @@ def test_build_writes_expected_files(tmp_path):
 
     feed_html = (tmp_path / "feed.html").read_text(encoding="utf-8")
     assert "新作スニーカー登場" in feed_html
-    assert "Hypebeast" in feed_html
+    assert "SampleMediaA" in feed_html
 
     trends_index = (tmp_path / "trends" / "index.html").read_text(encoding="utf-8")
     assert "今週のトレンド" in trends_index
@@ -209,7 +209,7 @@ def test_build_caps_feed_html_at_200_items(tmp_path):
         {
             "title": f"記事{i}",
             "url": f"https://example.com/{i}",
-            "source": "Hypebeast",
+            "source": "SampleMediaA",
             "published": f"2026-08-{(i % 28) + 1:02d}T00:00:00+00:00",
             "summary": "紹介文",
             "image_url": None,
@@ -258,7 +258,7 @@ def test_build_copies_static_assets(tmp_path):
 
 
 def test_pick_hero_selects_first_item_with_image_when_first_item_has_none():
-    # Highsnobietyのように画像を一切持たないソースの記事が最新であっても、
+    # SampleMediaAのように画像を一切持たないソースの記事が最新であっても、
     # 画像のある最初のアイテムがヒーローとして選ばれることを確認する。
     items = [
         {"title": "画像なし記事", "url": "https://example.com/a", "image_url": None},
@@ -298,14 +298,14 @@ def test_pick_hero_empty_list_returns_none_hero_and_empty_grid():
 
 
 def test_build_index_hero_prefers_item_with_image_over_more_recent_imageless_item(tmp_path):
-    # 公開日時降順で最新（先頭）のHighsnobiety記事に画像が無く、2番目の記事に
-    # 画像がある場合、ヒーローには画像のある2番目の記事が使われ、実際に
+    # 公開日時降順で最新（先頭）のSampleMediaA記事に画像が無く、2番目の記事に
+    # 画像がある場合を検証する。ヒーローには画像のある2番目の記事が使われ、実際に
     # <img>タグが出力されることを確認する（画像なしの黒い枠がヒーローになる不具合の回帰確認）。
     items = [
         {
-            "title": "Highsnobietyの画像なし記事",
+            "title": "SampleMediaAの画像なし記事",
             "url": "https://example.com/no-image",
-            "source": "Highsnobiety",
+            "source": "SampleMediaA",
             "published": "2026-08-20T00:00:00+00:00",
             "summary": "画像の無い記事",
             "image_url": None,
@@ -313,7 +313,7 @@ def test_build_index_hero_prefers_item_with_image_over_more_recent_imageless_ite
         {
             "title": "画像ありの記事",
             "url": "https://example.com/with-image",
-            "source": "Fashionsnap",
+            "source": "SampleMediaB",
             "published": "2026-08-19T00:00:00+00:00",
             "summary": "画像のある記事",
             "image_url": "https://example.com/photo.jpg",
@@ -326,19 +326,19 @@ def test_build_index_hero_prefers_item_with_image_over_more_recent_imageless_ite
     # 出現する（どちらも重複表示されない）。ヒーローのタイトルはimgのalt属性と
     # <h1>の両方に出るのが仕様なので、alt分の重複はここでは数えない。
     assert "<h1>画像ありの記事</h1>" in index_html
-    assert index_html.count("Highsnobietyの画像なし記事") == 1
+    assert index_html.count("SampleMediaAの画像なし記事") == 1
     assert index_html.count("<h1>") == 1
 
 
 def test_group_by_source_groups_items_preserving_first_appearance_order():
     items = [
-        {"title": "A", "source": "Hypebeast"},
-        {"title": "B", "source": "Fashionsnap"},
-        {"title": "C", "source": "Hypebeast"},
-        {"title": "D", "source": "Fashionsnap"},
+        {"title": "A", "source": "SampleMediaA"},
+        {"title": "B", "source": "SampleMediaB"},
+        {"title": "C", "source": "SampleMediaA"},
+        {"title": "D", "source": "SampleMediaB"},
     ]
     groups = _group_by_source(items)
-    assert [g["source"] for g in groups] == ["Hypebeast", "Fashionsnap"]
+    assert [g["source"] for g in groups] == ["SampleMediaA", "SampleMediaB"]
     assert [item["title"] for item in groups[0]["entries"]] == ["A", "C"]
     assert [item["title"] for item in groups[1]["entries"]] == ["B", "D"]
 
@@ -352,7 +352,7 @@ def test_build_feed_html_groups_items_by_source_with_toc(tmp_path):
         {
             "title": "記事A",
             "url": "https://example.com/a",
-            "source": "Hypebeast",
+            "source": "SampleMediaA",
             "published": "2026-08-20T00:00:00+00:00",
             "summary": "紹介文A",
             "image_url": None,
@@ -360,7 +360,7 @@ def test_build_feed_html_groups_items_by_source_with_toc(tmp_path):
         {
             "title": "記事B",
             "url": "https://example.com/b",
-            "source": "Fashionsnap",
+            "source": "SampleMediaB",
             "published": "2026-08-19T00:00:00+00:00",
             "summary": "紹介文B",
             "image_url": None,
@@ -368,10 +368,10 @@ def test_build_feed_html_groups_items_by_source_with_toc(tmp_path):
     ]
     build(tmp_path, items, [])
     feed_html = (tmp_path / "feed.html").read_text(encoding="utf-8")
-    assert 'href="#source-Hypebeast"' in feed_html
-    assert 'href="#source-Fashionsnap"' in feed_html
-    assert 'id="source-Hypebeast"' in feed_html
-    assert 'id="source-Fashionsnap"' in feed_html
+    assert 'href="#source-SampleMediaA"' in feed_html
+    assert 'href="#source-SampleMediaB"' in feed_html
+    assert 'id="source-SampleMediaA"' in feed_html
+    assert 'id="source-SampleMediaB"' in feed_html
     assert feed_html.index("記事A") < feed_html.index("記事B")
 
 
@@ -379,7 +379,7 @@ def test_build_index_trend_section_appears_before_new_arrivals_section(tmp_path)
     items = [{
         "title": "新作スニーカー登場",
         "url": "https://example.com/a",
-        "source": "Hypebeast",
+        "source": "SampleMediaA",
         "published": "2026-08-20T00:00:00+00:00",
         "summary": "新作の紹介文",
         "image_url": None,
@@ -411,7 +411,7 @@ def test_build_index_new_arrival_card_shows_source_badge(tmp_path):
         {
             "title": "ヒーロー用記事",
             "url": "https://example.com/hero",
-            "source": "Fashionsnap",
+            "source": "SampleMediaA",
             "published": "2026-08-20T00:00:00+00:00",
             "summary": "ヒーローの紹介文",
             "image_url": "https://example.com/hero.jpg",
@@ -419,7 +419,7 @@ def test_build_index_new_arrival_card_shows_source_badge(tmp_path):
         {
             "title": "新作スニーカー登場",
             "url": "https://example.com/a",
-            "source": "Hypebeast",
+            "source": "SampleMediaB",
             "published": "2026-08-19T00:00:00+00:00",
             "summary": "新作の紹介文",
             "image_url": None,
@@ -428,7 +428,7 @@ def test_build_index_new_arrival_card_shows_source_badge(tmp_path):
     build(tmp_path, items, [])
     index_html = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert 'class="source-badge"' in index_html
-    assert "Hypebeast" in index_html
+    assert "SampleMediaB" in index_html
 
 
 def test_build_index_grid_shows_up_to_15_items(tmp_path):
@@ -436,7 +436,7 @@ def test_build_index_grid_shows_up_to_15_items(tmp_path):
         {
             "title": f"記事{i}",
             "url": f"https://example.com/{i}",
-            "source": "Fashionsnap",
+            "source": "SampleMediaA",
             "published": f"2026-08-{(i % 28) + 1:02d}T00:00:00+00:00",
             "summary": "紹介文",
             "image_url": "https://example.com/photo.jpg" if i == 0 else None,
@@ -556,7 +556,7 @@ def test_build_search_index_includes_items_and_trends():
         {
             "title": "アディダス新作サンバ",
             "url": "https://example.com/samba",
-            "source": "Highsnobiety",
+            "source": "SampleMediaA",
             "published": "2026-08-22T07:10:03+00:00",
             "summary": "<p>新作のサンバが登場しました。</p>",
             "image_url": "https://example.com/samba.jpg",
@@ -568,7 +568,7 @@ def test_build_search_index_includes_items_and_trends():
             "date": "2026-08-21",
             "slug": "standard-revisited",
             "html": "<h2>見出し</h2><p>本文のテキストです。</p>",
-            "images": [{"image_url": "https://example.com/trend.jpg", "source": "Fashionsnap", "url": "https://example.com/a", "title": "紹介アイテム"}],
+            "images": [{"image_url": "https://example.com/trend.jpg", "source": "SampleMediaB", "url": "https://example.com/a", "title": "紹介アイテム"}],
         },
     ]
     index = _build_search_index(items, trends)
@@ -578,7 +578,7 @@ def test_build_search_index_includes_items_and_trends():
     assert item_entry["title"] == "アディダス新作サンバ"
     assert "新作のサンバが登場しました。" in item_entry["excerpt"]
     assert item_entry["url"] == "https://example.com/samba"
-    assert item_entry["source"] == "Highsnobiety"
+    assert item_entry["source"] == "SampleMediaA"
     assert item_entry["date"] == "2026-08-22"
     assert item_entry["image_url"] == "https://example.com/samba.jpg"
 
@@ -602,7 +602,7 @@ def test_build_writes_search_page_and_index_json(tmp_path):
         {
             "title": "記事タイトル",
             "url": "https://example.com/1",
-            "source": "Fashionsnap",
+            "source": "SampleMediaA",
             "published": "2026-08-22T00:00:00+00:00",
             "summary": "紹介文です",
             "image_url": None,
@@ -683,7 +683,7 @@ def test_base_nav_includes_varieties_link(tmp_path):
 
 
 def test_excerpt_strips_wordpress_appeared_first_on_boilerplate():
-    # LOVEGREENの実データ（2026-10-08に実機で取得して確認）は、HOUYHNHNMと語順が逆の
+    # LOVEGREENの実データ（2026-10-08に実機で取得して確認）は、別の媒体と語順が逆の
     # 「The post <a>記事タイトル</a> appeared first on <a>サイト名</a>.」という定型フッターを持つ。
     raw = (
         "<p>秋の気配を感じ始める頃に見かけるパンパスグラスは、大きな穂と柔らかなニュアンスカラーが魅力のイネ科の多年草。</p>\n"
@@ -699,7 +699,7 @@ def test_excerpt_strips_wordpress_appeared_first_on_boilerplate():
 
 
 def test_excerpt_still_strips_wordpress_first_appeared_on_boilerplate():
-    # HOUYHNHNM由来の語順（ファッション側の既存挙動）が壊れていないことの回帰確認
+    # 別の媒体由来の語順（ファッション側の既存挙動）が壊れていないことの回帰確認
     raw = (
         "<p>本文です。</p>\n"
         '<p>The post <a href="https://example.com/a">記事タイトル</a> first appeared on '

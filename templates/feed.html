@@ -9,13 +9,13 @@
 {% if groups %}
 <nav class="feed-toc">
 {% for group in groups %}
-  <a href="#source-{{ group.source }}">{{ group.source }}</a>
+  <a href="#source-{{ group.source | replace(' ', '-') }}">{{ group.source }}</a>
 {% endfor %}
 </nav>
 {% endif %}
 
 {% for group in groups %}
-<div class="section-head feed-source-head" id="source-{{ group.source }}">
+<div class="section-head feed-source-head" id="source-{{ group.source | replace(' ', '-') }}">
   <h2>{{ group.source }}</h2>
 </div>
 <div class="feed-list">

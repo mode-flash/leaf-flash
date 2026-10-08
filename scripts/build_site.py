@@ -19,14 +19,14 @@ TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "templates"
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
 _TAG_RE = re.compile(r"<[^>]+>")
-# 一部フィード（FASHIONSNAP等）はdescriptionが閉じ`>`の無いまま途中で切れた
+# 一部フィードはdescriptionが閉じ`>`の無いまま途中で切れた
 # `<img src="...`のような不完全なタグを含むことがある。通常の_TAG_REは`>`を
 # 要求するため除去できず、タグ風の文字列がそのまま読者に見えてしまう。
 # 属性値（URL等）は空白を含まない前提で、`<タグ名 属性="値`の形だけを
 # 狭く対象にして除去する（本文中の通常の"<"はこの形に一致しないため誤爆しない）。
 _UNCLOSED_TAG_RE = re.compile(r'<[a-zA-Z][a-zA-Z0-9]*\s+[a-zA-Z:-]+="[^"\s]*')
 
-# WordPress系フィード（HOUYHNHNMとLOVEGREEN）のdescriptionの末尾に必ず付く
+# WordPress系フィード（一部の媒体とLOVEGREEN）のdescriptionの末尾に必ず付く
 # 「The post <a>記事タイトル</a> first appeared on <a>サイト名</a>.」という定型フッターの
 # 除去用。媒体によって語順が逆になる場合がある（LOVEGREENの実データは
 # 「appeared first on」の語順。2026-10-08に実機で取得し確認済み）ため、両方の語順に一致させる。
@@ -158,8 +158,8 @@ def _prioritize_japanese(items: list[dict], limit: int, jp_ratio: float = TOP_GR
 def _pick_hero(items: list[dict]) -> tuple[dict | None, list[dict]]:
     """画像のある最新アイテムをヒーローとして選ぶ。無ければ先頭にフォールバックする.
 
-    itemsは公開日時降順にソート済みであることを前提とする。Highsnobietyのように
-    フィードに画像データを一切含まないソースの記事がたまたま最新（先頭）になると、
+    itemsは公開日時降順にソート済みであることを前提とする。フィードに画像データを
+    一切含まないソースの記事がたまたま最新（先頭）になると、
     ヒーロー（トップページの大きな目立つ枠）が画像の無い黒い枠のまま表示され、
     壊れて見える問題があった。これを避けるため、先頭から順に見て画像URLを持つ
     最初のアイテムをヒーローとして選び、グリッド（それ以降のカード一覧）からは
@@ -180,9 +180,9 @@ def _build_search_index(items: list[dict], trends: list[dict]) -> list[dict]:
 
     静的サイトのためサーバーサイド検索は使えず、ブラウザ側のJavaScript
     （static/search.js）が単純な部分文字列一致でこのインデックスを絞り込む
-    方式を取る。日本語の分かち書きは行わないため、タイトル・本文（トレンド
-    記事はプレーンテキスト化した全文、新着アイテムは抜粋）の両方を検索対象
-    として持たせ、部分一致でも見つけやすくする。
+    方式を取る。日本語の分かち書きは行わないため、部分一致でも見つけやすいよう
+    タイトルと本文の両方を検索対象として持たせる。本文は、トレンド記事は
+    プレーンテキスト化した全文、新着アイテムは抜粋とする。
     """
     index = []
     for item in items[:FEED_ITEM_LIMIT]:

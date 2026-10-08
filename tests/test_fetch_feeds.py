@@ -82,7 +82,7 @@ def test_parse_feed_rejects_javascript_image_url_scheme():
 
 
 def test_parse_feed_extracts_image_from_description_img_tag():
-    # Fashionsnap/Hypebeast両方の実データはmedia:thumbnail/media:content拡張要素を使わず、
+    # 一部の媒体の実データはmedia:thumbnail/media:content拡張要素を使わず、
     # descriptionの先頭に<img src="...">を埋め込み、その後ろに本文が続く形式で画像を提供する。
     rss = """<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
@@ -102,7 +102,7 @@ def test_parse_feed_extracts_image_from_description_img_tag():
 
 
 def test_parse_feed_unescapes_query_string_ampersands_in_description_image():
-    # Hypebeastの実データはクエリ文字列付きの画像URLを持ち、XML上は`&amp;amp;`と
+    # 別の媒体の実データはクエリ文字列付きの画像URLを持ち、XML上は`&amp;amp;`と
     # 二重エスケープされているため、feedparserが1段階デコードした後のsummaryには
     # `&amp;`が残る。html.unescape()でさらに1段階デコードして実URLに戻す必要がある。
     rss = """<?xml version="1.0" encoding="UTF-8"?>
@@ -159,7 +159,7 @@ def test_parse_feed_still_prefers_media_thumbnail_when_present():
 
 
 def test_parse_feed_extracts_image_from_content_encoded_when_summary_has_none():
-    # HOUYHNHNMの実データはFashionsnap/Hypebeastと異なり、画像はdescription(summary)には
+    # 別の媒体の実データは、前述の媒体と異なり画像はdescription(summary)には
     # 一切含まれず、content:encoded（entry.content[0].value）にのみ<img>タグとして
     # 埋め込まれている（実際のフィードをfeedparserで確認済み）。
     rss = """<?xml version="1.0" encoding="UTF-8"?>
@@ -168,23 +168,23 @@ def test_parse_feed_extracts_image_from_content_encoded_when_summary_has_none():
 <title>Sample Feed</title>
 <item>
 <title>真夏のブラック。ブラブラブラから軽やかなコットンウェアの新作コレクションが。</title>
-<link>https://example.com/houyhnhnm-item</link>
+<link>https://example.com/content-encoded-item</link>
 <description>&lt;p&gt;こう暑いと服のことを考えるのもなんだか億劫になりますよね。&lt;/p&gt;
-&lt;p&gt;The post &lt;a href="https://example.com/houyhnhnm-item"&gt;記事タイトル&lt;/a&gt; first appeared on &lt;a href="https://example.com"&gt;HOUYHNHNM（フイナム）&lt;/a&gt;.&lt;/p&gt;</description>
+&lt;p&gt;The post &lt;a href="https://example.com/content-encoded-item"&gt;記事タイトル&lt;/a&gt; first appeared on &lt;a href="https://example.com"&gt;SampleMediaB（サンプルメディア）&lt;/a&gt;.&lt;/p&gt;</description>
 <content:encoded><![CDATA[<div class="tate-img">
-<img alt="" class="alignnone size-full wp-image-1162896 image" height="1000" src="https://www.houyhnhnm.jp/wp-content/uploads/2026/08/BBB_CRSPBLK_01-1.jpg" width="800" />
+<img alt="" class="alignnone size-full wp-image-1162896 image" height="1000" src="https://example.com/wp-content/uploads/2026/08/BBB_CRSPBLK_01-1.jpg" width="800" />
 </div>]]></content:encoded>
 <pubDate>Thu, 20 Aug 2026 03:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>"""
-    items = parse_feed(rss, "HOUYHNHNM")
+    items = parse_feed(rss, "SampleMedia")
     assert len(items) == 1
-    assert items[0]["image_url"] == "https://www.houyhnhnm.jp/wp-content/uploads/2026/08/BBB_CRSPBLK_01-1.jpg"
+    assert items[0]["image_url"] == "https://example.com/wp-content/uploads/2026/08/BBB_CRSPBLK_01-1.jpg"
 
 
 def test_parse_feed_prefers_summary_image_over_content_encoded_when_both_present():
-    # summary内にimgがあればcontent:encodedより優先する（Fashionsnap/Hypebeastの既存挙動を
+    # summary内にimgがあればcontent:encodedより優先する（SampleMediaの既存挙動を
     # 変えないための優先順位）。
     rss = """<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
