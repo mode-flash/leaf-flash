@@ -1,0 +1,837 @@
+/* 観葉植物トレンドサイト（LEAF FLASH）の構造CSS。
+   値札や検品スタンプなど、リテールの実物モチーフを土台にしている（ファッション側と共通の骨格）。
+   配色とフォントは static/theme.css を見ること。 */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ---- ヘッダー ---- */
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.5rem;
+  border-bottom: 3px solid var(--ink);
+}
+
+.site-header a.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.brand-en {
+  font-family: var(--wordmark);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  letter-spacing: 0.05em;
+}
+
+.brand-ja {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  color: var(--mute);
+}
+
+.site-header .tagline {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--mute);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.2rem;
+  padding: 0.7rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-nav a {
+  text-decoration: none;
+  color: var(--mute);
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--accent);
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ---- セクション見出し ---- */
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 2.6rem 0 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ink);
+  opacity: 0.4;
+  transform: translateX(-16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.section-head.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-head {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.section-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: 0.01em;
+}
+
+.section-head .more {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--mute);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-head .more:hover,
+.section-head .more:focus-visible {
+  color: var(--accent);
+}
+
+/* ---- ヒーロー（最新1件） ---- */
+
+.hero {
+  position: relative;
+  margin-top: 1.6rem;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: stretch;
+}
+
+.hero .hero-media {
+  position: relative;
+  min-height: 340px;
+  background: #1a1a1a;
+}
+
+.hero .hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.82;
+}
+
+.hero .hero-body {
+  padding: 2rem 2.2rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero .hero-media {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+}
+
+.hero .eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0.5rem 0 0.7rem;
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  line-height: 1.25;
+}
+
+.hero .meta {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: rgba(242, 240, 236, 0.65);
+}
+
+/* ---- トップページ: トレンド分析フィーチャーカード ---- */
+
+.trend-feature {
+  display: block;
+  margin-top: 1.6rem;
+  padding: 1.8rem 2rem;
+  background: var(--paper-dim);
+  border-left: 6px solid var(--accent);
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.18s ease;
+}
+
+.trend-feature:hover,
+.trend-feature:focus-visible {
+  transform: translateY(-3px);
+}
+
+.trend-feature-date {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--mute);
+  letter-spacing: 0.04em;
+}
+
+.trend-feature-media {
+  margin: -1.8rem -2rem 1.2rem;
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.trend-feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trend-feature-title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  line-height: 1.3;
+  margin: 0.6rem 0 0.8rem;
+}
+
+.trend-feature-lead {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.8;
+}
+
+.trend-grid-sub {
+  margin-top: 1rem;
+}
+
+/* ---- NEWスタンプ（サイン要素） ---- */
+
+.stamp {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  transform: rotate(-8deg);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  padding: 0.18rem 0.5rem;
+  background: rgba(13, 13, 13, 0.55);
+  pointer-events: none;
+}
+
+.card .stamp {
+  background: var(--paper);
+}
+
+.hero .stamp {
+  top: 1.4rem;
+  right: 1.4rem;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.9rem;
+  border-width: 3px;
+  animation: stamp-drop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes stamp-drop {
+  0% {
+    transform: translateY(-160px) rotate(-8deg) scale(1.5);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(-8deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .stamp {
+    animation: none;
+  }
+}
+
+/* ---- カードグリッド（新着情報） ---- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.1rem;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.18s ease, border-color 0.12s ease;
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: var(--ink);
+}
+
+.card:nth-child(3n+1):hover,
+.card:nth-child(3n+1):focus-visible {
+  transform: rotate(-1.6deg) translateY(-3px);
+}
+
+.card:nth-child(3n+2):hover,
+.card:nth-child(3n+2):focus-visible {
+  transform: rotate(1.2deg) translateY(-3px);
+}
+
+.card:nth-child(3n):hover,
+.card:nth-child(3n):focus-visible {
+  transform: rotate(-0.9deg) translateY(-3px);
+}
+
+.card .thumb {
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  overflow: hidden;
+  position: relative;
+}
+
+.card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card .thumb.no-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 28px;
+  height: 28px;
+  background-color: var(--mute);
+  mask-image: var(--icon-no-image);
+  -webkit-mask-image: var(--icon-no-image);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+
+.card .card-body {
+  padding: 0.85rem 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.card .card-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.card .card-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--mute);
+  letter-spacing: 0.02em;
+}
+
+.source-badge {
+  border: 1px solid var(--ink);
+  padding: 0.12rem 0.4rem;
+  color: var(--ink);
+}
+
+.card .card-excerpt {
+  font-size: 0.82rem;
+  color: var(--mute);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---- 検索ページ（search.html） ---- */
+
+.search-box {
+  margin-top: 1.6rem;
+}
+
+.search-box input {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 1rem;
+  padding: 0.8rem 0.2rem;
+  border: none;
+  border-bottom: 3px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+}
+
+.search-box input::placeholder {
+  color: var(--mute);
+}
+
+.search-box input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.search-status {
+  margin: 0.9rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--mute);
+}
+
+/* ---- ブランド一覧ページ（brands.html） ---- */
+
+.brand-note {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--mute);
+}
+
+.brand-note a {
+  color: var(--mute);
+  text-decoration: underline;
+}
+
+.brand-note a:hover,
+.brand-note a:focus-visible {
+  color: var(--accent);
+}
+
+#search-results.card-grid {
+  margin-top: 1rem;
+}
+
+/* ---- 新着一覧ページ（feed.html）: ソース別セクション分け ---- */
+
+.feed-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.2rem 0 0;
+}
+
+.feed-toc a {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.7rem;
+}
+
+.feed-toc a:hover,
+.feed-toc a:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.feed-source-head {
+  margin-top: 2.2rem;
+  scroll-margin-top: 1rem;
+}
+
+/* ---- 新着一覧ページ（feed.html）: 1カラムの詳しめリスト ---- */
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  padding: 1.6rem 0 3rem;
+}
+
+.feed-item {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 1rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.feed-item .thumb {
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  overflow: hidden;
+  position: relative;
+}
+
+.feed-item .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.feed-item .thumb.no-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  background-color: var(--mute);
+  mask-image: var(--icon-no-image);
+  -webkit-mask-image: var(--icon-no-image);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+
+.feed-item .title {
+  font-weight: 700;
+  font-size: 1.02rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.feed-item .title:hover,
+.feed-item .title:focus-visible {
+  color: var(--accent);
+}
+
+.feed-item .meta {
+  margin: 0.35rem 0 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--mute);
+  letter-spacing: 0.02em;
+}
+
+.feed-item .excerpt {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #333;
+  line-height: 1.7;
+}
+
+/* ---- トレンド分析 ---- */
+
+.trend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.1rem;
+}
+
+.trend-card {
+  display: block;
+  padding: 1.1rem 1.2rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.18s ease;
+}
+
+.trend-card:nth-child(odd):hover,
+.trend-card:nth-child(odd):focus-visible {
+  transform: rotate(-1.3deg) translateY(-3px);
+}
+
+.trend-card:nth-child(even):hover,
+.trend-card:nth-child(even):focus-visible {
+  transform: rotate(1.3deg) translateY(-3px);
+}
+
+.trend-card .trend-date {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--mute);
+}
+
+.trend-card .trend-title {
+  margin-top: 0.4rem;
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.trend-card-media {
+  margin: -1.1rem -1.2rem 0.9rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--paper-dim);
+}
+
+.trend-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trend-empty {
+  padding: 2.2rem 1.4rem;
+  border: 1px dashed var(--line);
+  text-align: center;
+  color: var(--mute);
+}
+
+.trend-empty .stamp-inline {
+  display: inline-block;
+  transform: rotate(-4deg);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.trend-empty p {
+  margin: 0.3rem 0 0;
+  font-size: 0.88rem;
+}
+
+/* ---- トレンド記事詳細（本文） ---- */
+
+.article-meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--mute);
+  margin-top: 0.4rem;
+}
+
+.article-title {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
+  line-height: 1.3;
+  margin: 1.6rem 0 0.2rem;
+}
+
+.article-toc {
+  margin: 1.6rem 0 0;
+  padding: 1rem 1.2rem;
+  background: var(--paper-dim);
+  border-left: 4px solid var(--accent);
+}
+
+.article-toc-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--mute);
+  margin-bottom: 0.5rem;
+}
+
+.article-toc .toc {
+  margin: 0;
+}
+
+.article-toc ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  list-style: none;
+}
+
+.article-toc li {
+  margin: 0.35rem 0;
+}
+
+.article-toc a {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.article-toc a:hover,
+.article-toc a:focus-visible {
+  color: var(--accent);
+}
+
+.article-image-gallery {
+  margin-top: 1.6rem;
+}
+
+.article-image-gallery-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--mute);
+  margin-bottom: 0.6rem;
+}
+
+.article-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.8rem;
+}
+
+.article-image-card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+
+.article-image-thumb {
+  aspect-ratio: 4 / 3;
+  background: var(--paper-dim);
+  overflow: hidden;
+}
+
+.article-image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-image-card .source-badge {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  background: var(--paper);
+  font-size: 0.6rem;
+}
+
+.article-body {
+  margin-top: 1.6rem;
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.article-body h2 {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.25rem;
+  margin: 2.2rem 0 0.8rem;
+  padding-top: 0.4rem;
+  border-top: 2px solid var(--ink);
+}
+
+.article-body p {
+  margin: 1.1rem 0;
+}
+
+.article-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.article-body a:hover,
+.article-body a:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+/* ---- フッター ---- */
+
+.site-footer {
+  margin-top: 3rem;
+  padding: 1.6rem 1.5rem 2.4rem;
+  border-top: 3px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--mute);
+  text-align: center;
+}
+
+/* ---- レスポンシブ ---- */
+
+@media (max-width: 560px) {
+  .feed-item {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+}
+
+/* ---- アクセシビリティ ---- */
+
+a:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .trend-card,
+  .trend-feature {
+    transition: none;
+  }
+}
