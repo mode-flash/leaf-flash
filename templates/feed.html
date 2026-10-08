@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}新着情報 - {{ theme.SITE_NAME_EN }}{% endblock %}
+{% block content %}
+
+<div class="section-head">
+  <h2>新着情報</h2>
+</div>
+
+{% if groups %}
+<nav class="feed-toc">
+{% for group in groups %}
+  <a href="#source-{{ group.source }}">{{ group.source }}</a>
+{% endfor %}
+</nav>
+{% endif %}
+
+{% for group in groups %}
+<div class="section-head feed-source-head" id="source-{{ group.source }}">
+  <h2>{{ group.source }}</h2>
+</div>
+<div class="feed-list">
+{% for item in group.entries %}
+  <div class="feed-item">
+    <div class="thumb{% if not item.image_url %} no-image{% endif %}">
+      {% if item.image_url %}<img src="{{ item.image_url }}" alt="{{ item.title }}">{% endif %}
+    </div>
+    <div>
+      <a class="title" href="{{ item.url }}">{{ item.title }}</a>
+      <div class="meta">{{ item.source }} / {{ item.published[:10] }}</div>
+      <p class="excerpt">{{ item.summary | excerpt }}</p>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endfor %}
+
+{% endblock %}

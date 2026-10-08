@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}トレンド分析 - {{ theme.SITE_NAME_EN }}{% endblock %}
+{% block content %}
+
+<div class="section-head">
+  <h2>トレンド分析</h2>
+</div>
+{% if trends %}
+<div class="trend-grid">
+{% for post in trends %}
+  <a class="trend-card" href="{{ post.slug }}.html">
+    {% if post.images %}
+    <div class="trend-card-media">
+      <img src="{{ post.images[0].image_url }}" alt="{{ post.images[0].title }}">
+    </div>
+    {% endif %}
+    <div class="trend-date">{{ post.date }}</div>
+    <div class="trend-title">{{ post.title }}</div>
+  </a>
+{% endfor %}
+</div>
+{% else %}
+<div class="trend-empty">
+  <span class="stamp-inline">COMING SOON</span>
+  <p>週次のトレンド分析記事は準備中です。</p>
+</div>
+{% endif %}
+
+{% endblock %}

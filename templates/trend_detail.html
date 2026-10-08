@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} - {{ theme.SITE_NAME_EN }}{% endblock %}
+{% block content %}
+
+<div class="section-head">
+  <h2><a href="index.html">トレンド分析</a></h2>
+</div>
+<article>
+  <div class="article-meta">{{ post.date }}</div>
+  <h1 class="article-title">{{ post.title }}</h1>
+  {% if post.toc %}
+  <nav class="article-toc">
+    <div class="article-toc-label">この記事の内容</div>
+    {{ post.toc | safe }}
+  </nav>
+  {% endif %}
+  {% if post.images %}
+  <div class="article-image-gallery">
+    <div class="article-image-gallery-label">紹介したアイテム</div>
+    <div class="article-image-grid">
+    {% for img in post.images %}
+      <a class="article-image-card" href="{{ img.url }}">
+        <div class="article-image-thumb">
+          <img src="{{ img.image_url }}" alt="{{ img.title }}">
+        </div>
+        <span class="source-badge">{{ img.source }}</span>
+      </a>
+    {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="article-body">{{ post.html | safe }}</div>
+</article>
+
+{% endblock %}
