@@ -736,3 +736,50 @@ def test_build_injects_theme_into_all_pages_and_has_no_fashion_leftovers(tmp_pat
         assert "MODE FLASH" not in text
         assert "ファッション" not in text
         assert ">ブランド<" not in text
+
+
+def test_source_files_have_no_fashion_leftovers():
+    # ビルド後出力だけでなく、複製元（ファッション側）のソースファイル本体を
+    # 直接走査し、固有名詞の混入をビルド前の段階で検知する。
+    # （test_build_injects_theme_into_all_pages_and_has_no_fashion_leftovers は
+    # ビルド後HTMLのみを見るため、ビルドで出力されない箇所の混入を見逃す）
+    forbidden_strings = [
+        "MODE FLASH",
+        "Fashionsnap",
+        "Hypebeast",
+        "Highsnobiety",
+        "HOUYHNHNM",
+        "houyhnhnm.jp",
+        "ファッショントレンド",
+        "STREET & CASUAL",
+    ]
+
+    repo_root = Path(__file__).resolve().parent.parent
+    this_file = Path(__file__).resolve()
+
+    excluded_dir_names = {".venv", ".pytest_cache", "__pycache__", ".git", ".superpowers"}
+    target_dirs = ["scripts", "theme", "templates", "static", "tests"]
+    target_extensions = {".py", ".html", ".css", ".js"}
+
+    violations = []
+    for dir_name in target_dirs:
+        base_dir = repo_root / dir_name
+        if not base_dir.exists():
+            continue
+        for path in base_dir.rglob("*"):
+            if not path.is_file():
+                continue
+            if path.suffix.lower() not in target_extensions:
+                continue
+            if excluded_dir_names & set(path.parts):
+                continue
+            if path.resolve() == this_file:
+                continue
+
+            text = path.read_text(encoding="utf-8")
+            lowered = text.lower()
+            for forbidden in forbidden_strings:
+                if forbidden.lower() in lowered:
+                    violations.append(f"{path.relative_to(repo_root)}: {forbidden!r}")
+
+    assert not violations, "ファッション側の固有名詞がソースファイルに混入しています:\n" + "\n".join(violations)
