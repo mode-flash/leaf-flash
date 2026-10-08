@@ -15,8 +15,10 @@ from __future__ import annotations
 
 from urllib.parse import quote
 
-# 検索語（LOVEGREENとGardenstory共通）。実装時に残り3語（塊根植物とビカクシダと
-# エアプランツ）が実際に検索フィードを返すか確認すること（design doc 9節）。
+# 検索語（LOVEGREENとGardenstory共通）。
+# 残り3語（塊根植物とビカクシダとエアプランツ）はTask 8の実データ検証で確認済み
+# （design doc 9節）。LOVEGREEN・Gardenstoryとも各語で8〜10件の記事が返り、
+# 0件の取得元は無かった（2026-10-08確認）。
 SEARCH_TERMS = ["観葉植物", "多肉植物", "塊根植物", "ビカクシダ", "エアプランツ"]
 
 SEARCH_MEDIA = [
