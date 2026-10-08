@@ -150,8 +150,8 @@ main {
 .hero {
   position: relative;
   margin-top: 1.6rem;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper-dim);
+  color: var(--ink);
   overflow: hidden;
   text-decoration: none;
   display: grid;
@@ -208,7 +208,7 @@ main {
 .hero .meta {
   font-family: var(--mono);
   font-size: 0.78rem;
-  color: rgba(242, 240, 236, 0.65);
+  color: var(--mute);
 }
 
 /* ---- トップページ: トレンド分析フィーチャーカード ---- */
