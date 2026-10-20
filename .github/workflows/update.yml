@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "0 1,9,17 * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["content/trends/**"]
 
 concurrency:
   group: update-site
