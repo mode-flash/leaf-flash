@@ -642,6 +642,18 @@ def test_detect_species_returns_multiple_for_articles_mentioning_two_species():
     assert "ポトス" in species
 
 
+def test_detect_species_matches_lowercase_english_titles():
+    # 英語記事はタイトルの大文字小文字表記が揺れる（辞書は"Snake Plant"のような
+    # タイトルケースで登録されている）。実データのGardening Know Howの記事タイトルは
+    # 文頭以外が小文字になることがあるため、大文字小文字を区別せず検出できること。
+    assert _detect_species("snake plant care: how to keep it thriving") == ["サンスベリア"]
+    assert "カシワバゴムノキ" in _detect_species(
+        "Kristin Davis Named Her Fiddle Leaf Fig After Theo James"
+    )
+    assert _detect_species("What Your Christmas Cactus Needs in October") == ["シャコバサボテン"]
+    assert _detect_species("What Your Thanksgiving Cactus Needs in October") == ["シャコバサボテン"]
+
+
 def test_group_by_species_orders_by_count_descending_and_includes_multi_species_items():
     items = [
         {"title": "モンステラの育て方A", "url": "https://example.com/1"},

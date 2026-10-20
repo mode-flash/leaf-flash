@@ -215,10 +215,11 @@ def _detect_species(title: str) -> list[str]:
     RSSフィードには品種の構造化データが含まれないため、タイトルの
     部分文字列一致で判定する簡易的な検出。
     """
+    title_lower = title.lower()
     return [
         species
         for species, keywords in SPECIES_KEYWORDS.items()
-        if any(kw in title for kw in keywords)
+        if any(kw.lower() in title_lower for kw in keywords)
     ]
 
 

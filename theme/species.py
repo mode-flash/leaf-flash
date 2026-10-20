@@ -23,7 +23,7 @@ SPECIES_KEYWORDS: dict[str, list[str]] = {
     "アガベ": ["アガベ", "Agave"],
     "ビカクシダ": ["ビカクシダ", "コウモリラン", "Platycerium", "Staghorn"],
     "ガジュマル": ["ガジュマル"],
-    "カシワバゴムノキ": ["カシワバゴムノキ", "Ficus lyrata", "フィドルリーフフィグ"],
+    "カシワバゴムノキ": ["カシワバゴムノキ", "Ficus lyrata", "フィドルリーフフィグ", "Fiddle Leaf"],
     "エアプランツ": ["エアプランツ", "チランジア", "Tillandsia", "Air Plant"],
     "ハオルチア": ["ハオルチア", "Haworthia"],
     "エケベリア": ["エケベリア", "Echeveria"],
@@ -51,4 +51,8 @@ SPECIES_KEYWORDS: dict[str, list[str]] = {
     # 「ゴムノキ」（の無し）を採用語にすると「カシワバゴムノキ」の部分文字列として
     # 誤って二重検出されるのを避ける。
     "ゴムノキ": ["ゴムの木", "Ficus elastica", "Rubber Plant"],
+    # Gardening Know How（英語）の実データ検証で追加（2026-10-20）。Christmas Cactus・
+    # Thanksgiving CactusはどちらもSchlumbergera属（シャコバサボテン）の流通名で、
+    # 開花時期による呼び分けのため同じ和名にまとめる。
+    "シャコバサボテン": ["シャコバサボテン", "Schlumbergera", "Christmas Cactus", "Thanksgiving Cactus"],
 }

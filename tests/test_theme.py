@@ -47,6 +47,14 @@ def test_species_keywords_contains_common_houseplants():
     assert "ポトス" in SPECIES_KEYWORDS
 
 
+def test_species_keywords_cover_english_only_gardening_know_how_terms():
+    # INCLUDE_KEYWORDSの"fiddle leaf"・"cactus"に対応する品種が辞書に無いと、
+    # Gardening Know How（英語媒体）の記事が品種一覧に一件も載らない。
+    assert "Fiddle Leaf" in SPECIES_KEYWORDS["カシワバゴムノキ"]
+    assert "Christmas Cactus" in SPECIES_KEYWORDS["シャコバサボテン"]
+    assert "Thanksgiving Cactus" in SPECIES_KEYWORDS["シャコバサボテン"]
+
+
 def test_site_has_required_constants():
     assert site.SITE_NAME_EN == "LEAF FLASH"
     assert site.SITE_NAME_JA == "観葉植物トレンド速報"
