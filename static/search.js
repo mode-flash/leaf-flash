@@ -25,12 +25,6 @@
       status.textContent = "検索データの読み込みに失敗しました。時間をおいて再度お試しください。";
     });
 
-  function escapeHtml(value) {
-    var div = document.createElement("div");
-    div.textContent = value == null ? "" : value;
-    return div.innerHTML;
-  }
-
   function shortenExcerpt(text) {
     if (text.length > 160) {
       return text.slice(0, 160) + "…";
@@ -38,21 +32,50 @@
     return text;
   }
 
+  // HTML文字列の組み立て（innerHTML方式）は、属性値コンテキストへの埋め込みで
+  // エスケープ漏れが起きやすい（image_urlに"が含まれると属性から脱出しうる）ため、
+  // DOM API（createElement + プロパティ代入）でカードを組み立てる。
   function renderCard(entry) {
     var card = document.createElement("a");
     card.className = "card";
     card.href = entry.url;
-    var thumbClass = entry.image_url ? "thumb" : "thumb no-image";
-    var thumbHtml = entry.image_url
-      ? '<img src="' + escapeHtml(entry.image_url) + '" alt="">'
-      : "";
-    card.innerHTML =
-      '<div class="' + thumbClass + '">' + thumbHtml + "</div>" +
-      '<div class="card-body">' +
-      '<div class="card-title">' + escapeHtml(entry.title) + "</div>" +
-      '<div class="card-meta"><span class="source-badge">' + escapeHtml(entry.source) + "</span><span>" + escapeHtml(entry.date) + "</span></div>" +
-      '<p class="excerpt">' + escapeHtml(shortenExcerpt(entry.excerpt || "")) + "</p>" +
-      "</div>";
+
+    var thumb = document.createElement("div");
+    thumb.className = entry.image_url ? "thumb" : "thumb no-image";
+    if (entry.image_url) {
+      var img = document.createElement("img");
+      img.src = entry.image_url;
+      img.alt = "";
+      thumb.appendChild(img);
+    }
+
+    var body = document.createElement("div");
+    body.className = "card-body";
+
+    var title = document.createElement("div");
+    title.className = "card-title";
+    title.textContent = entry.title || "";
+
+    var meta = document.createElement("div");
+    meta.className = "card-meta";
+    var sourceBadge = document.createElement("span");
+    sourceBadge.className = "source-badge";
+    sourceBadge.textContent = entry.source || "";
+    var dateSpan = document.createElement("span");
+    dateSpan.textContent = entry.date || "";
+    meta.appendChild(sourceBadge);
+    meta.appendChild(dateSpan);
+
+    var excerpt = document.createElement("p");
+    excerpt.className = "excerpt";
+    excerpt.textContent = shortenExcerpt(entry.excerpt || "");
+
+    body.appendChild(title);
+    body.appendChild(meta);
+    body.appendChild(excerpt);
+
+    card.appendChild(thumb);
+    card.appendChild(body);
     return card;
   }
 
